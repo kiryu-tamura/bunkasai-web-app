@@ -1,0 +1,493 @@
+/* 基本的なリセットとページ全体のスタイル */
+body {
+    font-family: 'Shippori Mincho', serif;
+    margin: 0;
+    padding: 0;
+    background-color: #2F211A; /* ページ全体の背景色 (濃い茶色) */
+    color: #F5F5F5; /* 基本的な文字色 (生成り色) */
+    padding-bottom: 70px; /* フッターの高さ分 */
+}
+
+/* ヘッダーのスタイル */
+header {
+    background-color: #1A1410; /* ヘッダー背景色 (さらに濃い茶色) */
+    color: #D4AF37; /* 文字色 (金色っぽく) */
+    padding: 1.2rem 0;
+    text-align: center;
+    border-bottom: 2px solid #D4AF37; /* 下線も金色っぽく */
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 700; /* 太字 */
+    font-size: 1.8rem; /* 少し大きめに */
+}
+
+/* メインコンテンツエリアのスタイル */
+main {
+    padding: 1rem;
+    max-width: 600px;
+    margin: 1.5rem auto;
+    background-color: #F5EFE6; /* メインエリア背景色 (和紙のような色) */
+    border-radius: 8px; /* 少し角を丸く */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* 少し影をつける */
+    color: #333; /* メインエリア内の基本文字色 */
+}
+
+main h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #B7282E; /* 見出しの色 (赤色) */
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+/* === ホーム画面: 出し物リスト === */
+.exhibit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.exhibit-item {
+    background-color: #E4D5B7; /* リスト項目の背景色 (木目のようなベージュ) */
+    border: 1px solid #8C7853; /* 枠線の色 (少し濃いベージュ) */
+    margin-bottom: 1.2rem; /* 各項目の下の余白 */
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 項目にも少し影 */
+    /* overflow: hidden; を details に移動 */
+}
+
+.summary {
+    padding: 1rem 1.2rem; /* 内側の余白 */
+    cursor: pointer; /* マウスカーソルを指マークにする */
+    position: relative; /* アイコンを配置するため */
+    /* display: flex; を削除 (画像とタイトルエリアで分ける) */
+    transition: background-color 0.2s ease; /* 背景色変化を滑らかに */
+}
+
+.summary:hover {
+    background-color: #d8c8a8; /* 少し明るいベージュ */
+}
+
+.exhibit-item.is-open .summary {
+    background-color: #d8c8a8; /* 開かれている項目は少し明るいベージュを維持 */
+    border-bottom: 1px dashed #8C7853; /* 詳細との間に区切り線 */
+}
+
+.summary h3 {
+    margin: 0; /* 見出しの余白をリセット */
+    color: #5C3A21; /* 文字色 (濃い茶色) */
+    font-weight: 700; /* 太字 */
+    font-size: 1.1rem;
+    flex-grow: 1; /* アイコン以外のスペースを埋める */
+    margin-right: 1rem; /* アイコンとの間に少し余白 */
+}
+
+.toggle-icon {
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid #5C3A21; /* アイコンの色 (濃い茶色) */
+    border-bottom: 2px solid #5C3A21;
+    transform: rotate(45deg); /* 45度回転させて下向きの矢印に */
+    transition: transform 0.3s ease-out; /* 回転アニメーション */
+    flex-shrink: 0; /* アイコンが縮まないように */
+    margin-left: auto; /* 右端に寄せる */
+}
+
+.exhibit-item.is-open .toggle-icon {
+    transform: rotate(-135deg); /* さらに回転させて上向きの矢印に */
+}
+
+.details {
+    max-height: 0; /* 初期状態では高さを0に */
+    overflow: hidden; /* はみ出した内容を隠す */
+    transition: max-height 0.5s ease-out, padding 0.5s ease-out; /* アニメーション設定 */
+    padding: 0 1.2rem; /* 開いたときの左右のpadding */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.15)); /* 背景に薄いグラデーション */
+    border-top: none; /* summary側で区切り線をつけるので不要に */
+}
+
+.exhibit-item.is-open .details {
+    max-height: 1000px; /* 十分な高さを指定 (内容は収まるように調整) */
+    padding: 1rem 1.2rem;
+}
+
+.details p { /* 詳細テキスト共通スタイル */
+    margin: 0;
+    font-size: 0.85rem;
+    color: #333;
+    line-height: 1.6; /* 行間を少し広げる */
+}
+.details p:not(:first-child) { /* 最初のp以外 */
+     padding-top: 0.8rem; /* 上に少し余白 */
+     border-top: 1px solid rgba(140, 120, 83, 0.3); /* 段落の上に薄い区切り線 */
+}
+
+/* === ホーム画面: 出し物リスト内の画像・地図スタイル === */
+.exhibit-item .list-image-container {
+    text-align: center;
+    margin-bottom: 0.8rem;
+    min-height: 50px;
+    background-color: rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+}
+.exhibit-item .list-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-radius: 4px;
+    object-fit: cover;
+    vertical-align: middle; /* 追加 */
+}
+.exhibit-item .no-image-text {
+    font-size: 0.9rem;
+    color: #888;
+    padding: 2rem 0;
+}
+.details .map-image-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+.details .map-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.details .location-text {
+    font-weight: bold;
+    color: #5C3A21;
+    margin-top: 0.5rem;
+    display: block;
+    text-align: center;
+}
+
+
+/* === フッターナビゲーションのスタイル === */
+footer {
+    background-color: #1A1410;
+    border-top: 2px solid #D4AF37;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+.nav-item {
+    display: block;
+    flex: 1;
+    padding: 0.8rem 0;
+    text-align: center;
+    text-decoration: none;
+    color: #E4D5B7;
+    font-size: 0.8rem;
+    transition: background-color 0.2s ease;
+}
+
+.nav-item:hover {
+    background-color: #3a2d24;
+}
+
+.nav-item.active {
+    background-color: #B7282E;
+    color: #FFFFFF;
+    font-weight: 700;
+}
+
+/* === ゲーム画面のスタイル === */
+.game-link-list {
+    margin-top: 1.5rem;
+}
+
+.game-link-item {
+    background-color: #E4D5B7;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid #8C7853;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.game-link-item a {
+    text-decoration: none;
+    color: #B7282E; /* ゲームタイトルを目立たせる赤色 */
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: block; /* リンク領域を広げる */
+    margin-bottom: 0.5rem; /* 説明文との間に余白 */
+}
+
+.game-link-item p {
+    font-size: 0.9rem;
+    color: #4A3728;
+    margin: 0; /* 上下の余白をリセット */
+}
+
+/* === お知らせ画面のスタイル (変更点あり) === */
+.info-list {
+    margin-top: 1.5rem;
+}
+
+.info-item {
+    /* ↓ 背景色、パディング、影などを調整 */
+    background-color: #e9e0cf; /* 少し明るいベージュに変更 */
+    padding: 1.2rem 1.5rem; /* パディングを少し調整 */
+    margin-bottom: 1.5rem; /* お知らせ間の余白を少し広げる */
+    border-radius: 6px; /* 角丸を少し調整 */
+    border: 1px solid #bcae90; /* 枠線の色を少し濃く */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* 影を少し強調 */
+    color: #333; /* 文字色を再指定 */
+}
+
+.info-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.6rem; /* タイトル下の余白 */
+    color: #8B4513; /* タイトルの色を茶色系に */
+    font-size: 1.15rem; /* タイトルサイズを少し大きく */
+    font-weight: 700;
+    border-bottom: 1px dashed #bcae90; /* タイトルの下に区切り線 */
+    padding-bottom: 0.4rem; /* 区切り線との間に余白 */
+}
+
+.info-item .date {
+    font-size: 0.8rem;
+    color: #777; /* 日付の色を少し濃く */
+    margin-bottom: 0.6rem; /* 本文との間の余白 */
+    display: block;
+    text-align: right; /* 日付を右寄せ (任意) */
+}
+
+.info-item .description {
+    font-size: 0.9rem;
+    color: #4A3728; /* お知らせ本文の色 */
+    margin: 0;
+    line-height: 1.7; /* 行間をさらに少し広げる */
+}
+
+/* === SNS画面のスタイル === */
+.sns-placeholder {
+    border: 2px dashed #ccc;
+    padding: 3rem 1rem;
+    text-align: center;
+    margin-top: 1.5rem;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.05); /* 背景を少しだけつける */
+}
+
+.sns-placeholder p {
+    color: #8C7853; /* 文字色を少し変更 */
+    font-size: 0.9rem;
+    margin: 0;
+}
+/* --- ここから追加 --- */
+
+/* === ゲーム画面: ゲームリストと埋め込み表示 === */
+
+/* ゲームリスト全体のコンテナ */
+#game-list-container {
+    margin-top: 1.5rem;
+}
+
+/* 各ゲーム項目のスタイル */
+.game-item {
+    background-color: #E4D5B7;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.2rem;
+    border-radius: 6px;
+    border: 1px solid #8C7853;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex; /* Flexboxでレイアウト */
+    flex-direction: column; /* 基本は縦並び */
+    align-items: center; /* 中央揃え */
+    text-align: center;
+}
+
+/* ゲームタイトル */
+.game-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #5C3A21;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+/* ゲーム説明 (任意) */
+.game-item .description {
+    font-size: 0.9rem;
+    color: #4A3728;
+    margin-bottom: 1rem;
+}
+
+/* ゲームプレイボタン */
+.play-button {
+    display: inline-block;
+    background-color: #B7282E; /* 赤色 */
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 20px; /* 丸みを帯びたボタン */
+    font-family: 'Shippori Mincho', serif; /* フォントを適用 */
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.play-button:hover {
+    background-color: #9e2227; /* 少し暗い赤 */
+}
+.play-button:active {
+    transform: scale(0.98); /* クリック時に少し縮む */
+}
+
+/* ゲーム埋め込み用 iframe のコンテナ */
+#game-iframe-container {
+    display: none; /* 初期状態では非表示 */
+    margin-top: 1rem;
+    width: 100%;
+    /* ↓ 高さをビューポート基準で設定 (画面の高さの70%程度) */
+    /* ただし、ヘッダーとフッターの高さを考慮する必要あり */
+    height: calc(100vh - 180px); /* 画面高さ - (ヘッダー約50px + フッター約60px + 上下マージン約70px) の概算 */
+    min-height: 300px; /* 最小高さを確保 */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden; /* コンテナからはみ出さないように */
+    position: relative; /* ローディング表示のため */
+}
+
+/* ゲーム埋め込み用 iframe */
+#game-iframe {
+    width: 100%;
+    height: 100%;
+    border: none; /* iframe の枠線を消す */
+    display: block; /* 余計な隙間をなくす */
+}
+
+/* iframe読み込み中の表示 (任意) */
+#game-iframe-container::before {
+    content: "ゲームを読み込み中...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #888;
+    font-style: italic;
+    z-index: 1; /* iframeより手前に表示 */
+}
+#game-iframe-container.loaded::before {
+    display: none; /* 読み込み完了したら消す */
+}
+
+
+/* 「リストに戻る」ボタン */
+#back-to-list-button {
+    display: none; /* 初期状態では非表示 */
+    margin: 1.5rem auto 0; /* 上に余白、左右中央揃え */
+    background-color: #666;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 15px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#back-to-list-button:hover {
+    background-color: #555;
+}
+
+
+/* --- ここまで追加 --- */
+/* --- ここから追加 --- */
+
+/* === ホーム画面: カテゴリ見出し === */
+.category-title {
+    font-size: 1.3rem; /* カテゴリ見出しのサイズ */
+    color: #5C3A21; /* カテゴリ見出しの色 (濃い茶色) */
+    text-align: left; /* 左寄せ (または center) */
+    margin-top: 2.5rem; /* 上の要素との余白を大きめに */
+    margin-bottom: 1rem; /* 下のリストとの余白 */
+    padding-bottom: 0.5rem; /* 下線との余白 */
+    border-bottom: 2px solid #8C7853; /* 下線 */
+}
+
+/* 最初のカテゴリ見出しの上の余白を調整 (任意) */
+main > h2 + .category-title { /* main直下のh2の次に来るcategory-title */
+    margin-top: 1.5rem;
+}
+
+/* --- ここまで追加 --- */
+/* --- ここから追加 --- */
+
+/* === ホーム画面: タブUI === */
+.tab-container {
+    margin-top: 1.5rem;
+}
+
+.tab-buttons {
+    display: flex; /* タブボタンを横並びにする */
+    border-bottom: 2px solid #8C7853; /* タブの下線 */
+    margin-bottom: 1.5rem;
+}
+
+.tab-button {
+    font-family: 'Shippori Mincho', serif;
+    background-color: transparent; /* 通常時の背景は透明 */
+    border: 1px solid transparent; /* 通常時は枠線なし (アクティブ時とのずれを防ぐため) */
+    border-bottom: none; /* 下の枠線は tab-buttons で引くので不要 */
+    padding: 0.8rem 1.5rem; /* タブの余白 */
+    cursor: pointer;
+    font-size: 1rem; /* 文字サイズ */
+    color: #5C3A21; /* 通常時の文字色 */
+    border-radius: 6px 6px 0 0; /* 上の角だけ丸くする */
+    margin-right: 5px; /* タブ同士の間隔 */
+    position: relative; /* アクティブ時の下線調整のため */
+    bottom: -2px; /* 下線を重ねるための調整 */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tab-button:hover {
+    background-color: rgba(228, 213, 183, 0.5); /* ホバー時の背景色 (薄いベージュ) */
+    color: #B7282E; /* ホバー時の文字色 (赤) */
+}
+
+.tab-button.active {
+    background-color: #E4D5B7; /* アクティブなタブの背景色 (リスト項目の背景に近い色) */
+    color: #B7282E; /* アクティブなタブの文字色 (赤) */
+    border-color: #8C7853; /* アクティブなタブの枠線 */
+    border-bottom: 2px solid #E4D5B7; /* 下線を背景色で上書きして繋がっているように見せる */
+    font-weight: bold;
+}
+
+.tab-content-area {
+    /* 特にスタイルは不要だが、将来的な拡張のために用意 */
+}
+
+.tab-content {
+    display: none; /* 初期状態では非表示 */
+}
+
+.tab-content.active {
+    display: block; /* アクティブなタブの内容だけ表示 */
+}
+
+/* カテゴリ見出しはタブUIでは不要になるので、既存の .category-title は削除してもOK */
+/* もし残す場合は、タブコンテンツ内の見出しとして調整が必要 */
+
+/* --- ここまで追加 --- */

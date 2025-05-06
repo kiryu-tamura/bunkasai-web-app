@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清高万博 - SNS</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* SNS画面固有のスタイル */
+        .sns-link-container {
+            text-align: center; /* ボタンを中央揃え */
+            margin-top: 2rem;
+            padding: 2rem 1rem;
+            background-color: rgba(255, 255, 255, 0.1); /* 背景を少しつける (任意) */
+            border-radius: 8px;
+        }
+
+        .instagram-link-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); /* Instagram風グラデーション */
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px; /* 丸みを帯びたボタン */
+            font-family: 'Shippori Mincho', serif; /* フォントを適用 */
+            font-size: 1rem; /* 少し大きめに */
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* 文字に影 */
+        }
+
+        .instagram-link-button:hover {
+            transform: translateY(-2px); /* 少し浮き上がる */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+         .instagram-link-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>清高万博</h1>
+    </header>
+
+    <main>
+        <h2>#清高万博 SNS</h2>
+        <p style="text-align: center; padding: 1.5rem 1rem 0.5rem; color: #4A3728;">
+            文化祭の様子をInstagramでチェック！<br>
+            「#清高万博」をつけてみんなで盛り上がろう！
+        </p>
+
+        <div class="sns-link-container">
+             <a href="https://www.instagram.com/explore/tags/清高万博/" target="_blank" rel="noopener noreferrer" class="instagram-link-button">
+                Instagramで #清高万博 を見る
+            </a>
+             <p style="font-size: 0.8rem; color: #666; margin-top: 1.5rem;">
+                ※InstagramアプリまたはWebサイトが開きます。
+            </p>
+        </div>
+
+    </main>
+
+    <footer>
+        <nav class="footer-nav">
+            <a href="index.html" class="nav-item">ホーム</a>
+            <a href="game.html" class="nav-item">ゲーム</a>
+            <a href="sns.html" class="nav-item active">SNS</a>
+            <a href="info.html" class="nav-item">お知らせ</a>
+        </nav>
+    </footer>
+
+</body>
+</html>
