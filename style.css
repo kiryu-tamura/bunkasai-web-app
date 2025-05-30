@@ -1,0 +1,270 @@
+bbody {
+    font-family: 'Shippori Mincho', serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* 全体の背景色を非常に薄いグレーに */
+    color: #333; /* 基本的な文字色を濃いグレーに */
+    padding-top: 60px; /* ヘッダーの高さ分 (固定ヘッダー用) */
+    padding-bottom: 75px; /* 新しいフッターの高さ分 (少し高めに調整) */
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/背景画像.PNG'); /* ★ポスター画像のファイル名を指定してください */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0.3; /* 透明度 */
+    z-index: -1;
+}
+
+header {
+    background-color: #ffffff; /* ヘッダー背景色を白 (不透明) */
+    color: #000000; /* ヘッダー文字色を黒に */
+    padding: 1rem 0;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0; /* 境界線を少し濃く */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed; /* ヘッダーを画面上部に固定 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* 他の要素より手前に表示 */
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+main {
+    padding: 1.5rem 1rem;
+    max-width: 700px;
+    margin: 1.5rem auto;
+    background-color: rgba(255, 255, 255, 0.95); /* メインエリア背景をほぼ不透明な白に */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    color: #333333; /* メインエリア内の基本文字色 */
+    position: relative;
+    z-index: 1;
+}
+
+main h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #000000;
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.loading-message, .error-message, .no-exhibits-message, .no-announcements-message, .no-shop-items-message { /* .no-shop-items-message を追加 */
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #555555;
+    font-style: italic;
+}
+.error-message {
+    color: #B7282E;
+    font-weight: bold;
+    border: 1px solid #B7282E;
+    background-color: rgba(183, 40, 46, 0.1);
+    border-radius: 5px;
+}
+
+/* === ホーム画面: タブUI (変更なし部分は省略) === */
+.tab-container { margin-top: 1.5rem; }
+.tab-buttons { display: flex; border-bottom: 2px solid #333333; margin-bottom: 1.5rem; }
+.tab-button { font-family: 'Shippori Mincho', serif; background-color: transparent; border: 1px solid transparent; border-bottom: none; padding: 0.8rem 1.5rem; cursor: pointer; font-size: 1rem; color: #555555; border-radius: 6px 6px 0 0; margin-right: 5px; position: relative; bottom: -2px; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+.tab-button:hover { background-color: #f0f0f0; color: #000000; }
+.tab-button.active { background-color: #ffffff; color: #000000; border-color: #333333 #333333 #ffffff; border-width: 2px; border-style: solid; font-weight: bold; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* === ホーム画面: 出し物リスト (変更なし部分は省略) === */
+.exhibit-list { list-style: none; padding: 0; margin: 0; }
+.exhibit-item { background-color: #ffffff; border: 1px solid #e0e0e0; margin-bottom: 1.2rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); overflow: hidden; }
+.summary { padding: 1rem 1.2rem; cursor: pointer; position: relative; transition: background-color 0.2s ease; }
+.summary:hover { background-color: #f8f9fa; }
+.exhibit-item.is-open .summary { background-color: #f0f2f5; border-bottom: 1px solid #e0e0e0; }
+.summary h4 { margin: 0; color: #333333; font-weight: 700; font-size: 1.1rem; flex-grow: 1; margin-right: 1rem; }
+.toggle-icon { width: 12px; height: 12px; border-right: 2px solid #333333; border-bottom: 2px solid #333333; transform: rotate(45deg); transition: transform 0.3s ease-out; flex-shrink: 0; margin-left: auto; }
+.exhibit-item.is-open .toggle-icon { transform: rotate(-135deg); }
+.details { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, padding 0.5s ease-out; padding: 0 1.2rem; background-color: #fdfdfd; }
+.exhibit-item.is-open .details { max-height: 1000px; padding: 1rem 1.2rem; }
+.details p { margin: 0; font-size: 0.9rem; color: #333333; line-height: 1.7; }
+.details p:not(:first-child) { padding-top: 0.8rem; border-top: 1px solid #eee; }
+.exhibit-item .list-image-container { text-align: center; margin-bottom: 1rem; min-height: 100px; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; border-radius: 4px; overflow: hidden; }
+.exhibit-item .list-image { max-width: 100%; max-height: 250px; height: auto; border-radius: 0; object-fit: cover; vertical-align: middle; }
+.exhibit-item .no-image-text { font-size: 0.9rem; color: #6c757d; padding: 2rem 0; }
+.details .map-image-container { margin-top: 1.2rem; text-align: center; }
+.details .map-image { max-width: 100%; height: auto; border-radius: 4px; border: 1px solid #ced4da; }
+.details .location-text { font-weight: bold; color: #333333; margin-top: 0.8rem; display: block; text-align: center; }
+
+/* === フッターナビゲーションのスタイル === */
+footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+}
+.footer-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+}
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 0.4rem 0.2rem;
+    text-decoration: none;
+    color: #555555;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+    position: relative;
+}
+.nav-item i {
+    font-size: 1.5rem;
+    margin-bottom: 0.15rem;
+    line-height: 1;
+}
+.nav-item span {
+    display: block;
+    font-weight: normal;
+}
+.nav-item:hover { color: #000000; }
+.nav-item:hover i { color: #000000; }
+.nav-item.active { color: #000000; }
+.nav-item.active i { color: #000000; }
+.nav-item.active span { font-weight: bold; }
+.notification-dot { position: absolute; top: 2px; right: calc(50% - 18px); width: 8px; height: 8px; background-color: red; border-radius: 50%; border: 1px solid white; display: none; }
+.nav-item.has-notification .notification-dot { display: block; }
+
+/* === ゲーム画面のスタイル (変更なし部分は省略) === */
+.game-item { background-color: #ffffff; padding: 1.2rem 1.5rem; margin-bottom: 1.2rem; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.game-item h3 { margin-top: 0; margin-bottom: 0.5rem; color: #333333; font-size: 1.15rem; font-weight: 700; }
+.game-item .description { font-size: 0.9rem; color: #555555; margin-bottom: 1rem; }
+.play-button { display: inline-block; background-color: #333333; color: white; padding: 0.6rem 1.5rem; border: none; border-radius: 20px; font-family: 'Shippori Mincho', serif; font-size: 0.9rem; font-weight: bold; text-decoration: none; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.play-button:hover { background-color: #555555; }
+#game-iframe-container { display: none; margin-top: 1rem; width: 100%; height: calc(100vh - 180px); min-height: 300px; border: 1px solid #ced4da; border-radius: 5px; overflow: hidden; position: relative; }
+#game-iframe-container::before { color: #6c757d; }
+#back-to-list-button { background-color: #6c757d; }
+#back-to-list-button:hover { background-color: #5a6268; }
+
+/* === お知らせ画面のスタイル (変更なし部分は省略) === */
+.info-item { background-color: #ffffff; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08); color: #333333; }
+.info-item h3 { margin-top: 0; margin-bottom: 0.6rem; color: #000000; font-size: 1.15rem; font-weight: 700; border-bottom: 1px dashed #cccccc; padding-bottom: 0.4rem; }
+.info-item .date { font-size: 0.8rem; color: #666666; margin-bottom: 0.6rem; display: block; text-align: right; }
+.info-item .description { font-size: 0.9rem; color: #333333; margin: 0; line-height: 1.7; }
+
+/* === SNS画面のスタイル (変更なし部分は省略) === */
+.sns-link-container { text-align: center; margin-top: 1.5rem; padding: 1.5rem 1rem; border-radius: 8px; }
+.instagram-button-group { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.instagram-link-button { display: inline-flex; align-items: center; justify-content: center; min-width: 280px; padding: 0.7rem 1.5rem; font-size: 0.95rem; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: none; border-radius: 25px; font-family: 'Shippori Mincho', serif; font-weight: bold; text-decoration: none; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+.instagram-link-button i { margin-right: 0.5rem; font-size: 1.1em; }
+.instagram-link-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+.instagram-link-button:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+/* --- ▼▼▼ 購買ページのスタイルを追加 ▼▼▼ --- */
+.shop-item-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* 画面幅に応じて列数を自動調整 */
+    gap: 1rem; /* アイテム間の隙間 */
+    margin-top: 1.5rem;
+}
+
+.shop-item-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px; /* 角を少し丸く */
+    padding: 0.8rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column; /* 中身を縦に並べる */
+    justify-content: space-between; /* 要素間のスペースを均等に */
+    position: relative; /* 売り切れ表示のため */
+    overflow: hidden; /* 売り切れリボンのため */
+}
+
+.shop-item-card.sold-out {
+    opacity: 0.6; /* 売り切れ商品は少し薄く表示 */
+}
+
+.shop-item-card .item-image-container {
+    width: 100%;
+    height: 130px; /* 画像コンテナの高さを固定 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0; /* 画像がない場合の背景 */
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    overflow: hidden; /* 画像がはみ出ないように */
+}
+
+.shop-item-card .item-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover; /* アスペクト比を保ちつつコンテナにフィット */
+}
+.shop-item-card .no-item-image-text {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.shop-item-card .item-name {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.4rem;
+    line-height: 1.3; /* 商品名が複数行になった場合の間隔 */
+    /* 2行までに制限して、はみ出たら ... で表示 (任意) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.6em; /* 2行分の高さを確保 (font-size * line-height * 2) */
+}
+
+.shop-item-card .item-price {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000000;
+    margin-top: auto; /* 価格を下部に固定 */
+    margin-bottom: 0;
+}
+
+/* 売り切れリボンスタイル */
+.sold-out-ribbon {
+    position: absolute;
+    top: 10px; /* 位置調整 */
+    right: -30px; /* 位置調整 */
+    background-color: #dc3545; /* 赤色 */
+    color: white;
+    padding: 5px 30px; /* パディング調整 */
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+    transform: rotate(45deg); /* 斜めにする */
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+    z-index: 10; /* 画像より手前 */
+    line-height: 1.2;
+}

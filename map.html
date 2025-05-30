@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清高万博 - 校内地図</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* map.html 固有のスタイル */
+        .map-container {
+            text-align: center;
+            padding: 1rem;
+        }
+        .overall-map {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer; /* タップできることを示すカーソル */
+            transition: transform 0.2s ease;
+        }
+        .overall-map:hover {
+            transform: scale(1.02); /* 少し拡大するホバーエフェクト (PC用) */
+        }
+
+        /* 全画面表示用モーダル */
+        .fullscreen-modal {
+            display: none; /* 初期状態では非表示 */
+            position: fixed;
+            z-index: 2000; /* ヘッダーやフッターより手前 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* 画像が大きい場合にスクロール可能に */
+            background-color: rgba(0,0,0,0.85); /* 背景を暗くする */
+            justify-content: center;
+            align-items: center;
+        }
+        .fullscreen-modal img {
+            max-width: 95%;
+            max-height: 95%;
+            display: block;
+            margin: auto;
+            border-radius: 5px;
+        }
+        .close-fullscreen {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 2001; /* 画像より手前 */
+        }
+        .close-fullscreen:hover,
+        .close-fullscreen:focus {
+            color: #bbb;
+            text-decoration: none;
+        }
+    </style>
+    <script src="common.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>清高万博</h1>
+    </header>
+
+    <main>
+        <h2>校内地図</h2>
+        <div class="map-container">
+            <p style="margin-bottom: 1.5rem; color: #555;">地図画像をタップすると拡大表示します。<p>(画面を横にすると見やすくなります。)<br></p>
+            <img src="images/S__14901343.jpg" alt="校内全体地図" class="overall-map" id="overallMapImage" onerror="this.alt='地図画像の読み込みに失敗しました'; this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend', '<p style=\'color:red;\'>地図画像の読み込みに失敗しました。</p>');">
+        </div>
+    </main>
+
+    <div id="fullscreenModal" class="fullscreen-modal">
+        <span class="close-fullscreen" id="closeFullscreenModal">&times;</span>
+        <img id="fullscreenImage" src="" alt="拡大地図">
+    </div>
+
+    <footer>
+        <nav class="footer-nav">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>ホーム</span>
+            </a>
+            <a href="map.html" class="nav-item active"> 
+                <i class="fas fa-map-marked-alt"></i>
+                <span>地図</span>
+            </a>
+            <a href="shop.html" class="nav-item">
+                <i class="fas fa-store"></i>
+                <span>購買</span>
+            </a>
+            <a href="sns.html" class="nav-item">
+                <i class="fab fa-instagram"></i>
+                <span>インスタ</span>
+            </a>
+            <a href="info.html" class="nav-item">
+                <i class="fas fa-bullhorn"></i>
+                <span>お知らせ</span>
+            </a>
+        </nav>
+    </footer>
+
+    <script>
+        const overallMapImage = document.getElementById('overallMapImage');
+        const fullscreenModal = document.getElementById('fullscreenModal');
+        const fullscreenImage = document.getElementById('fullscreenImage');
+        const closeFullscreenModal = document.getElementById('closeFullscreenModal');
+
+        if (overallMapImage && fullscreenModal && fullscreenImage && closeFullscreenModal) {
+            // 地図画像をクリックしたときの処理
+            overallMapImage.addEventListener('click', function() {
+                fullscreenImage.src = this.src; // モーダル内の画像に同じ画像を設定
+                fullscreenImage.alt = this.alt;
+                fullscreenModal.style.display = 'flex'; // モーダルを表示 (flexで中央揃え)
+            });
+
+            // 閉じるボタンをクリックしたときの処理
+            closeFullscreenModal.addEventListener('click', function() {
+                fullscreenModal.style.display = 'none'; // モーダルを非表示
+            });
+
+            // モーダル背景をクリックしたときも閉じる (任意)
+            fullscreenModal.addEventListener('click', function(event) {
+                if (event.target === fullscreenModal) { // 画像以外の背景部分をクリックした場合
+                    fullscreenModal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
