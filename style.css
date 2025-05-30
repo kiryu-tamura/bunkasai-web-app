@@ -41,15 +41,19 @@ header {
 
 header h1 {
     margin: 0;
-    font-weight: 700;
-    font-size: 1.8rem;
+    font-weight: normal; /* Yuji Syuku は太字指定が不要な場合が多い */
+    font-size: 2.2rem; /* フォントに合わせてサイズを少し調整 (お好みで) */
+    line-height: 1.2;
+    /* ▼▼▼ ヘッダータイトルのフォントを変更 ▼▼▼ */
+    font-family: 'Yuji Syuku', cursive; /* 'cursive' は代替フォント */
+    /* ▲▲▲ ここまで変更 ▲▲▲ */
 }
 
 main {
-    padding: 1.5rem 1rem;
+    padding: 2.5rem 1rem;
     max-width: 700px;
-    margin: 1.5rem auto;
-    background-color: rgba(255, 255, 255, 0.95); /* メインエリア背景をほぼ不透明な白に */
+    margin: 2.0rem auto 1.5rem auto; /* 上下のマージンを調整 */
+    background-color: rgba(255, 255, 255, 0.8); /* メインエリア背景をほぼ不透明な白に */
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     color: #333333; /* メインエリア内の基本文字色 */
