@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -308,4 +309,283 @@
         });
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清高万博 - ホーム</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ローディング/エラーメッセージ用のスタイル (info.htmlと同様) */
+        .loading-message, .error-message, .no-exhibits-message {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #8C7853;
+            font-style: italic;
+        }
+        .error-message {
+            color: #B7282E;
+            font-weight: bold;
+            border: 1px solid #B7282E;
+            background-color: rgba(183, 40, 46, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>清高万博</h1>
+    </header>
+
+    <main>
+        <h2>出し物紹介</h2>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab-target="#hr-exhibits-content">HR展</button>
+                <button class="tab-button" data-tab-target="#club-exhibits-content">文化部展</button>
+                <button class="tab-button" data-tab-target="#other-exhibits-content">その他</button>
+            </div>
+
+            <div class="tab-content-area">
+                <div id="hr-exhibits-content" class="tab-content active">
+                    <ul class="exhibit-list">
+                        <p class="loading-message">HR展のデータを読み込み中...</p>
+                    </ul>
+                </div>
+
+                <div id="club-exhibits-content" class="tab-content">
+                    <ul class="exhibit-list">
+                        <p class="loading-message">文化部展のデータを読み込み中...</p>
+                    </ul>
+                </div>
+
+                <div id="other-exhibits-content" class="tab-content">
+                    <ul class="exhibit-list">
+                        <p class="loading-message">その他の出し物を読み込み中...</p>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <nav class="footer-nav">
+            <a href="index.html" class="nav-item active">ホーム</a>
+            <a href="game.html" class="nav-item">ゲーム</a>
+            <a href="sns.html" class="nav-item">SNS</a>
+            <a href="info.html" class="nav-item">お知らせ</a>
+        </nav>
+    </footer>
+
+    <script>
+        // =============================================
+        // Google Apps Script の Web アプリ URL を設定
+        // =============================================
+        // !!! 必ずご自身の URL に書き換えてください !!!
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec';
+        const EXHIBITS_API_URL = GAS_URL + '?sheet=Exhibits'; // 「Exhibits」シートを指定
+
+        // タブ関連の要素を取得
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // カテゴリと対応するタブコンテンツのIDのマッピング
+        const categoryToTabId = {
+            'HR展': 'hr-exhibits-content',
+            '文化部展': 'club-exhibits-content',
+            'その他': 'other-exhibits-content'
+        };
+
+        // タブ切り替え機能
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.tabTarget;
+                const targetContent = document.querySelector(targetId);
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                tabContents.forEach(content => content.classList.remove('active'));
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+
+        // アコーディオン機能を設定する関数
+        function setupAccordionListeners(listElement) {
+            const exhibitItems = listElement.querySelectorAll('.js-exhibit-item');
+            exhibitItems.forEach(item => {
+                const summary = item.querySelector('.summary');
+                if (summary && !summary.dataset.accordionAttached) { // イベントが重複しないようにチェック
+                    summary.addEventListener('click', () => {
+                        item.classList.toggle('is-open');
+                    });
+                    summary.dataset.accordionAttached = 'true'; // イベント設定済みの印
+                }
+            });
+        }
+
+        // 出し物データを取得して表示する関数
+        async function fetchAndDisplayExhibits() {
+            try {
+                const response = await fetch(EXHIBITS_API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const allExhibits = await response.json();
+
+                if (allExhibits.error) {
+                    throw new Error(allExhibits.message || 'Failed to load exhibit data from Google Sheet.');
+                }
+
+                // 各タブのリストコンテナをクリア (ローディングメッセージを削除)
+                Object.values(categoryToTabId).forEach(tabId => {
+                    const listElement = document.querySelector(`#${tabId} .exhibit-list`);
+                    if (listElement) {
+                        listElement.innerHTML = ''; // ローディングメッセージを削除
+                    }
+                });
+
+                // 出し物をカテゴリごとに振り分け
+                const categorizedExhibits = {
+                    'HR展': [],
+                    '文化部展': [],
+                    'その他': []
+                };
+
+                if (Array.isArray(allExhibits)) {
+                    allExhibits.forEach(item => {
+                        if (item.category && categorizedExhibits[item.category]) {
+                            categorizedExhibits[item.category].push(item);
+                        } else {
+                            // カテゴリ不明または不正な場合は「その他」に入れる (任意)
+                            categorizedExhibits['その他'].push(item);
+                        }
+                    });
+                }
+
+
+                // 各カテゴリのタブに出し物を表示
+                for (const category in categorizedExhibits) {
+                    const tabId = categoryToTabId[category];
+                    const listElement = document.querySelector(`#${tabId} .exhibit-list`);
+                    const exhibits = categorizedExhibits[category];
+
+                    if (!listElement) continue;
+
+                    if (exhibits.length === 0) {
+                        listElement.innerHTML = `<p class="no-exhibits-message">${category}の出し物はありません。</p>`;
+                        continue;
+                    }
+
+                    exhibits.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'exhibit-item js-exhibit-item';
+
+                        // Summary部分 (画像とタイトル)
+                        const summaryDiv = document.createElement('div');
+                        summaryDiv.className = 'summary';
+
+                        const listImageContainer = document.createElement('div');
+                        listImageContainer.className = 'list-image-container';
+                        if (item.list_image) {
+                            const img = document.createElement('img');
+                            img.src = `images/${item.list_image}`;
+                            img.alt = `${item.title} イメージ`;
+                            img.className = 'list-image';
+                            img.onerror = function() {
+                                this.style.display = 'none';
+                                this.parentElement.innerHTML = '<span class="no-image-text">[画像準備中]</span>';
+                            };
+                            listImageContainer.appendChild(img);
+                        } else {
+                            listImageContainer.innerHTML = '<span class="no-image-text">[画像なし]</span>';
+                        }
+
+                        const titleContainer = document.createElement('div');
+                        titleContainer.style.display = 'flex';
+                        titleContainer.style.justifyContent = 'space-between';
+                        titleContainer.style.alignItems = 'center';
+                        titleContainer.style.width = '100%';
+
+                        const titleH4 = document.createElement('h4');
+                        titleH4.textContent = item.title || 'タイトルなし';
+
+                        const toggleIcon = document.createElement('span');
+                        toggleIcon.className = 'toggle-icon';
+
+                        titleContainer.appendChild(titleH4);
+                        titleContainer.appendChild(toggleIcon);
+
+                        summaryDiv.appendChild(listImageContainer);
+                        summaryDiv.appendChild(titleContainer);
+
+                        // Details部分 (詳細、場所、地図)
+                        const detailsDiv = document.createElement('div');
+                        detailsDiv.className = 'details';
+
+                        const detailsP = document.createElement('p');
+                        detailsP.innerHTML = (item.details || '詳細情報はありません。').replace(/\\n/g, '<br>');
+
+                        const locationSpan = document.createElement('span');
+                        locationSpan.className = 'location-text';
+                        locationSpan.textContent = item.location_text || '';
+
+                        const mapImageContainer = document.createElement('div');
+                        mapImageContainer.className = 'map-image-container';
+                        if (item.map_image) {
+                            const mapImg = document.createElement('img');
+                            mapImg.src = `images/${item.map_image}`;
+                            mapImg.alt = `${item.title} 場所の地図`;
+                            mapImg.className = 'map-image';
+                            mapImg.onerror = function() {
+                                this.style.display = 'none';
+                                this.parentElement.innerHTML = '<span class="no-image-text">[地図準備中]</span>';
+                            };
+                            mapImageContainer.appendChild(mapImg);
+                        } else {
+                            mapImageContainer.innerHTML = '<span class="no-image-text">[地図なし]</span>';
+                        }
+
+                        detailsDiv.appendChild(detailsP);
+                        if (item.location_text) detailsDiv.appendChild(locationSpan);
+                        if (item.map_image || !item.map_image) detailsDiv.appendChild(mapImageContainer); // 地図がない場合もコンテナは表示(no-image-textのため)
+
+
+                        li.appendChild(summaryDiv);
+                        li.appendChild(detailsDiv);
+                        listElement.appendChild(li);
+                    });
+                    // 動的に生成されたリストにアコーディオン機能を設定
+                    setupAccordionListeners(listElement);
+                }
+
+            } catch (error) {
+                console.error('Error fetching or displaying exhibits:', error);
+                // 全てのタブコンテンツにエラーメッセージを表示
+                Object.values(categoryToTabId).forEach(tabId => {
+                    const listElement = document.querySelector(`#${tabId} .exhibit-list`);
+                    if (listElement) {
+                         listElement.innerHTML = `<div class="error-message">データの読み込みに失敗しました。<br>(${error.message})</div>`;
+                    }
+                });
+            }
+        }
+
+        // ページ読み込み時にデータを取得して表示
+        fetchAndDisplayExhibits();
+    </script>
+
+</body>
+>>>>>>> 1a21c126bf54e62ad50d90b24b87d7b0587cbf60
 </html>

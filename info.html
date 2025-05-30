@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -139,4 +140,151 @@
         });
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清高万博 - お知らせ</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ローディング表示用のスタイル (index.htmlと同じ) */
+        .loading-message {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #8C7853;
+            font-style: italic;
+        }
+        /* エラーメッセージ用のスタイル (index.htmlと同じ) */
+        .error-message {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #B7282E; /* 赤色 */
+            font-weight: bold;
+            border: 1px solid #B7282E;
+            background-color: rgba(183, 40, 46, 0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>清高万博</h1>
+    </header>
+
+    <main>
+        <h2>お知らせ</h2>
+        <div id="info-list-container">
+            <p class="loading-message">お知らせを読み込み中...</p>
+        </div>
+    </main>
+
+    <footer>
+        <nav class="footer-nav">
+            <a href="index.html" class="nav-item">ホーム</a>
+            <a href="game.html" class="nav-item">ゲーム</a>
+            <a href="sns.html" class="nav-item">SNS</a>
+            <a href="info.html" class="nav-item active">お知らせ</a>
+        </nav>
+    </footer>
+
+    <script>
+        // =============================================
+        // Google Apps Script の Web アプリ URL を設定
+        // =============================================
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec';
+        const ANNOUNCEMENTS_API_URL = GAS_URL + '?sheet=Announcements';
+
+        // お知らせリストを表示するコンテナ要素を取得
+        const infoListContainer = document.getElementById('info-list-container');
+
+        // データ取得と表示を実行する関数
+        async function fetchAndDisplayAnnouncements() {
+            try {
+                // ★★★ デバッグ用: アクセスするURLをコンソールに出力 ★★★
+                console.log('Requesting URL:', ANNOUNCEMENTS_API_URL);
+
+                // APIからデータを非同期で取得
+                const response = await fetch(ANNOUNCEMENTS_API_URL);
+
+                // レスポンスが正常かチェック
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // レスポンスをJSONとして解析
+                const data = await response.json();
+
+                 // エラーが含まれていないかチェック (GAS側でエラーを返した場合)
+                if (data.error) {
+                  // ↓ エラーメッセージにシート名が含まれるように修正
+                  throw new Error(data.message || 'Failed to load data from Google Sheet.');
+                }
+                // データが配列で、空でないことを確認
+                if (!Array.isArray(data) || data.length === 0) {
+                   infoListContainer.innerHTML = '<p class="loading-message">表示できるお知らせがありません。</p>';
+                   return;
+                }
+
+
+                // 既存のローディングメッセージをクリア
+                infoListContainer.innerHTML = '';
+
+                // データをもとにHTMLリストを生成
+                const infoListDiv = document.createElement('div');
+                infoListDiv.className = 'info-list'; // CSSクラスを適用 (style.cssで定義済み)
+
+                data.forEach(item => {
+                    // 各お知らせ項目 (div) を作成
+                    const infoItemDiv = document.createElement('div');
+                    infoItemDiv.className = 'info-item'; // CSSクラスを適用 (style.cssで定義済み)
+
+                    // タイトル (h3)
+                    const titleH3 = document.createElement('h3');
+                    titleH3.textContent = item.title || 'タイトルなし';
+
+                    // 日付 (p)
+                    const dateP = document.createElement('p');
+                    dateP.className = 'date'; // CSSクラスを適用 (style.cssで定義済み)
+                    dateP.textContent = item.date || '';
+
+                    // 本文 (p)
+                    const contentP = document.createElement('p');
+                    contentP.className = 'description'; // CSSクラスを適用 (style.cssで定義済み)
+                    contentP.innerHTML = (item.content || '本文はありません。').replace(/\\n/g, '<br>');
+
+                    // infoItemDiv にタイトル、日付、本文を追加
+                    infoItemDiv.appendChild(titleH3);
+                    if(item.date) infoItemDiv.appendChild(dateP); // 日付があれば追加
+                    infoItemDiv.appendChild(contentP);
+
+                    // infoListDiv に infoItemDiv を追加
+                    infoListDiv.appendChild(infoItemDiv);
+                });
+
+                // コンテナに生成したリスト (infoListDiv) を追加
+                infoListContainer.appendChild(infoListDiv);
+
+            } catch (error) {
+                // エラーが発生した場合の処理
+                // ↓ エラーオブジェクト全体もログに出力
+                console.error('Error fetching or displaying announcements:', error);
+                infoListContainer.innerHTML = `<div class="error-message">お知らせの読み込みに失敗しました。<br>(${error.message})</div>`;
+            }
+        }
+
+        // ページ読み込み時にデータを取得して表示
+        fetchAndDisplayAnnouncements();
+
+    </script>
+
+</body>
+>>>>>>> 1a21c126bf54e62ad50d90b24b87d7b0587cbf60
 </html>
