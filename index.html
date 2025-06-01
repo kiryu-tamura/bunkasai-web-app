@@ -7,8 +7,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -16,7 +17,7 @@
         .loading-message, .error-message, .no-exhibits-message {
             text-align: center;
             padding: 3rem 1rem;
-            color: #555555; /* style.css と合わせる */
+            color: #555555;
             font-style: italic;
         }
         .error-message {
@@ -26,47 +27,7 @@
             background-color: rgba(183, 40, 46, 0.1);
             border-radius: 5px;
         }
-        /* 1・2年生タブ用のシンプルな表示スタイル */
-        .grade-exhibit-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid; /* グリッドレイアウトを利用 */
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 画面幅に応じて列数を自動調整 */
-            gap: 1rem; /* アイテム間の隙間 */
-        }
-        .grade-exhibit-item {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 0.8rem;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.07);
-        }
-        .grade-exhibit-item img {
-            max-width: 100%;
-            height: 120px; /* 画像の高さを固定 (調整可) */
-            object-fit: cover; /* アスペクト比を保ちつつコンテナに収める */
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            background-color: #f0f0f0; /* 画像がない場合の背景 */
-        }
-        .grade-exhibit-item .class-name {
-            font-weight: bold;
-            font-size: 0.9rem;
-            color: #333;
-        }
-        .grade-exhibit-item .no-image-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 120px; /* img の高さと合わせる */
-            background-color: #f0f0f0;
-            color: #888;
-            font-size: 0.8rem;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-        }
+        /* 1・2年生タブ用のスタイルは style.css に移動 */
     </style>
 </head>
 <body>
@@ -83,22 +44,22 @@
 
             <div class="tab-content-area">
                 <div id="grade1-content" class="tab-content active">
-                    <ul class="grade-exhibit-list"> 
+                    <ul class="grade-exhibit-list">
                         <p class="loading-message">1年生の出し物を読み込み中...</p>
                     </ul>
                 </div>
                 <div id="grade2-content" class="tab-content">
-                    <ul class="grade-exhibit-list"> 
+                    <ul class="grade-exhibit-list">
                         <p class="loading-message">2年生の出し物を読み込み中...</p>
                     </ul>
                 </div>
                 <div id="hr-exhibits-content" class="tab-content">
-                    <ul class="exhibit-list"> 
+                    <ul class="exhibit-list">
                         <p class="loading-message">HR展のデータを読み込み中...</p>
                     </ul>
                 </div>
                 <div id="club-exhibits-content" class="tab-content">
-                    <ul class="exhibit-list"> 
+                    <ul class="exhibit-list">
                         <p class="loading-message">文化部展のデータを読み込み中...</p>
                     </ul>
                 </div>
@@ -123,13 +84,11 @@
         const tabButtonsHome = document.querySelectorAll('.tab-button');
         const tabContentsHome = document.querySelectorAll('.tab-content');
 
-        // ★★★ 新しいタブIDとカテゴリのマッピング ★★★
         const categoryToTabIdHome = {
             '1年生': 'grade1-content',
             '2年生': 'grade2-content',
             'HR展': 'hr-exhibits-content',
             '文化部展': 'club-exhibits-content'
-            // スプレッドシートの display_type 列に上記の値が入ることを想定
         };
 
         tabButtonsHome.forEach(button => {
@@ -146,7 +105,7 @@
         });
 
         function setupAccordionListenersHome(listElement) {
-            const exhibitItems = listElement.querySelectorAll('.js-exhibit-item'); // HR展・文化部展用
+            const exhibitItems = listElement.querySelectorAll('.js-exhibit-item');
             exhibitItems.forEach(item => {
                 const summary = item.querySelector('.summary');
                 if (summary && !summary.dataset.accordionAttached) {
@@ -165,9 +124,8 @@
                 const allExhibits = await response.json();
                 if (allExhibits.error) throw new Error(allExhibits.message || 'Failed to load exhibit data.');
 
-                // 各タブのリストを初期化
                 Object.values(categoryToTabIdHome).forEach(tabId => {
-                    const listElement = document.querySelector(`#${tabId} > ul`); // ul を直接指定
+                    const listElement = document.querySelector(`#${tabId} > ul`);
                     if (listElement) listElement.innerHTML = '';
                 });
 
@@ -179,20 +137,17 @@
                     return;
                 }
 
-                // ★★★ スプレッドシートの 'display_type' 列で分類 ★★★
                 const categorizedExhibits = {};
                 Object.keys(categoryToTabIdHome).forEach(cat => categorizedExhibits[cat] = []);
 
                 allExhibits.forEach(item => {
-                    const displayType = item.display_type; // スプレッドシートの列名に合わせる
+                    const displayType = item.display_type;
                     if (displayType && categorizedExhibits[displayType]) {
                         categorizedExhibits[displayType].push(item);
                     } else {
-                        // どのカテゴリにも属さないものは表示しないか、エラーとして扱う
                         console.warn(`Item with title "${item.title}" has unknown display_type: "${displayType}"`);
                     }
                 });
-
 
                 for (const category in categorizedExhibits) {
                     const tabId = categoryToTabIdHome[category];
@@ -207,33 +162,33 @@
                     }
 
                     if (category === '1年生' || category === '2年生') {
-                        // ★★★ 「1年生」「2年生」タブの表示処理 ★★★
                         exhibits.forEach(item => {
                             const li = document.createElement('li');
                             li.className = 'grade-exhibit-item';
-
-                            let imageHtml = '<div class="no-image-placeholder">[画像なし]</div>';
-                            if (item.list_image) { // スプレッドシートの画像ファイル名列
-                                imageHtml = `<img src="images/${item.list_image}" alt="${item.title || '出し物イメージ'}" onerror="this.style.display='none'; this.parentElement.innerHTML = '<div class=\\'no-image-placeholder\\'>[画像準備中]</div>';">`;
-                            }
                             
-                            const className = item.title || 'クラス名未設定'; // 'title' 列をクラス名として使用
+                            const imageContainer = document.createElement('div'); // ★画像コンテナ作成
+                            imageContainer.className = 'grade-item-image-container';
+                            let imageHtml = '<div class="no-image-placeholder">[画像なし]</div>';
+                            if (item.list_image) {
+                                imageHtml = `<img src="images/${item.list_image}" alt="${item.title || '出し物イメージ'}" class="grade-item-image" onerror="this.style.display='none'; this.parentElement.innerHTML = '<div class=\\'no-image-placeholder\\'>[画像準備中]</div>';">`;
+                            }
+                            imageContainer.innerHTML = imageHtml;
+                            
+                            const classNameP = document.createElement('p'); // ★クラス名用にpタグ作成
+                            classNameP.className = 'class-name';
+                            classNameP.textContent = item.title || 'クラス名未設定';
 
-                            li.innerHTML = `
-                                ${imageHtml}
-                                <p class="class-name">${className}</p>
-                            `;
+                            li.appendChild(imageContainer);
+                            li.appendChild(classNameP);
                             listElement.appendChild(li);
                         });
                     } else if (category === 'HR展' || category === '文化部展') {
-                        // ★★★ 「HR展」「文化部展」タブの表示処理 (既存のアコーディオン) ★★★
                         exhibits.forEach(item => {
                             const li = document.createElement('li');
-                            li.className = 'exhibit-item js-exhibit-item'; // js-exhibit-item を確認
-                            
+                            li.className = 'exhibit-item js-exhibit-item';
+                            // (summaryDiv, listImageContainer, titleContainer の生成は変更なし)
                             const summaryDiv = document.createElement('div');
                             summaryDiv.className = 'summary';
-                            
                             const listImageContainer = document.createElement('div');
                             listImageContainer.className = 'list-image-container';
                             if (item.list_image) {
@@ -246,7 +201,6 @@
                             } else {
                                 listImageContainer.innerHTML = '<span class="no-image-text">[画像なし]</span>';
                             }
-
                             const titleContainer = document.createElement('div');
                             titleContainer.style.display = 'flex';
                             titleContainer.style.justifyContent = 'space-between';
@@ -258,7 +212,6 @@
                             toggleIcon.className = 'toggle-icon';
                             titleContainer.appendChild(titleH4);
                             titleContainer.appendChild(toggleIcon);
-                            
                             summaryDiv.appendChild(listImageContainer);
                             summaryDiv.appendChild(titleContainer);
 
@@ -283,15 +236,34 @@
                                 mapImageContainer.innerHTML = '<span class="no-image-text">[地図なし]</span>';
                             }
                             
+                            // ★★★ クラT画像の表示処理を追加 ★★★
+                            const classTshirtImageContainer = document.createElement('div');
+                            classTshirtImageContainer.className = 'class-tshirt-image-container'; // CSSでスタイル指定
+                            if (item.class_tshirt_image) { // スプレッドシートの列名に合わせる
+                                const tshirtImg = document.createElement('img');
+                                tshirtImg.src = `images/${item.class_tshirt_image}`;
+                                tshirtImg.alt = `${item.title} クラスTシャツ`;
+                                tshirtImg.className = 'class-tshirt-image'; // CSSでスタイル指定
+                                tshirtImg.onerror = function() { this.style.display='none'; this.parentElement.innerHTML = '<span class="no-image-text">[クラT画像準備中]</span>'; };
+                                classTshirtImageContainer.appendChild(tshirtImg);
+                            } else {
+                                // クラT画像がない場合は何も表示しないか、プレースホルダーを表示 (任意)
+                                // classTshirtImageContainer.innerHTML = '<span class="no-image-text">[クラTなし]</span>';
+                            }
+                            
                             detailsDiv.appendChild(detailsP);
                             if (item.location_text) detailsDiv.appendChild(locationSpan);
-                            detailsDiv.appendChild(mapImageContainer); // 地図がなくてもコンテナは表示(任意)
+                            detailsDiv.appendChild(mapImageContainer);
+                            // ★★★ クラT画像コンテナを地図の下に追加 (HR展の場合のみなどを考慮しても良い) ★★★
+                            if (category === 'HR展' && item.class_tshirt_image) { // HR展で画像がある場合のみ表示
+                                detailsDiv.appendChild(classTshirtImageContainer);
+                            }
 
                             li.appendChild(summaryDiv);
                             li.appendChild(detailsDiv);
                             listElement.appendChild(li);
                         });
-                        setupAccordionListenersHome(listElement); // アコーディオンのリスナーを設定
+                        setupAccordionListenersHome(listElement);
                     }
                 }
 

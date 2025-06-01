@@ -1,15 +1,18 @@
-bbody {
+/* 基本的なリセットとページ全体のスタイル (変更なし部分は省略) */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+body {
     font-family: 'Shippori Mincho', serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f9fa; /* 全体の背景色を非常に薄いグレーに */
-    color: #333; /* 基本的な文字色を濃いグレーに */
-    padding-top: 60px; /* ヘッダーの高さ分 (固定ヘッダー用) */
-    padding-bottom: 75px; /* 新しいフッターの高さ分 (少し高めに調整) */
+    background-color: #f8f9fa;
+    color: #333;
+    padding-top: 80px; /* ヘッダーの高さに応じて調整 */
+    padding-bottom: 75px;
     position: relative;
     min-height: 100vh;
 }
-
 body::before {
     content: "";
     position: fixed;
@@ -17,7 +20,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('images/背景画像.PNG'); /* ★ポスター画像のファイル名を指定してください */
+    background-image: url('images/背景画像.PNG'); /* ★ご自身のファイル名にしてください */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -25,42 +28,40 @@ body::before {
     z-index: -1;
 }
 
+/* ヘッダーのスタイル (変更なし部分は省略) */
 header {
-    background-color: #ffffff; /* ヘッダー背景色を白 (不透明) */
-    color: #000000; /* ヘッダー文字色を黒に */
+    background-color: #ffffff;
+    color: #000000;
     padding: 1rem 0;
     text-align: center;
-    border-bottom: 1px solid #e0e0e0; /* 境界線を少し濃く */
+    border-bottom: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: fixed; /* ヘッダーを画面上部に固定 */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* 他の要素より手前に表示 */
+    z-index: 1000;
 }
-
 header h1 {
     margin: 0;
-    font-weight: normal; /* Yuji Syuku は太字指定が不要な場合が多い */
-    font-size: 2.2rem; /* フォントに合わせてサイズを少し調整 (お好みで) */
+    font-weight: normal;
+    font-size: 2.2rem;
     line-height: 1.2;
-    /* ▼▼▼ ヘッダータイトルのフォントを変更 ▼▼▼ */
-    font-family: 'Yuji Syuku', cursive; /* 'cursive' は代替フォント */
-    /* ▲▲▲ ここまで変更 ▲▲▲ */
+    font-family: 'Yuji Syuku', cursive;
 }
 
+/* メインコンテンツエリアのスタイル (変更なし部分は省略) */
 main {
-    padding: 2.5rem 1rem;
+    padding: 1.5rem 1rem;
     max-width: 700px;
-    margin: 2.0rem auto 1.5rem auto; /* 上下のマージンを調整 */
-    background-color: rgba(255, 255, 255, 0.8); /* メインエリア背景をほぼ不透明な白に */
+    margin: 2rem auto 1.5rem auto;
+    background-color: rgba(255, 255, 255, 0.8); /* 透明度を0.8に */
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    color: #333333; /* メインエリア内の基本文字色 */
+    color: #333333;
     position: relative;
-    z-index: 1;
+    z-index: 0.8;
 }
-
 main h2 {
     text-align: center;
     margin-bottom: 2rem;
@@ -68,8 +69,7 @@ main h2 {
     font-weight: 700;
     font-size: 1.6rem;
 }
-
-.loading-message, .error-message, .no-exhibits-message, .no-announcements-message, .no-shop-items-message { /* .no-shop-items-message を追加 */
+.loading-message, .error-message, .no-exhibits-message, .no-announcements-message, .no-shop-items-message {
     text-align: center;
     padding: 3rem 1rem;
     color: #555555;
@@ -92,7 +92,7 @@ main h2 {
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* === ホーム画面: 出し物リスト (変更なし部分は省略) === */
+/* === ホーム画面: 出し物リスト (HR展・文化部展用) === */
 .exhibit-list { list-style: none; padding: 0; margin: 0; }
 .exhibit-item { background-color: #ffffff; border: 1px solid #e0e0e0; margin-bottom: 1.2rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); overflow: hidden; }
 .summary { padding: 1rem 1.2rem; cursor: pointer; position: relative; transition: background-color 0.2s ease; }
@@ -102,56 +102,89 @@ main h2 {
 .toggle-icon { width: 12px; height: 12px; border-right: 2px solid #333333; border-bottom: 2px solid #333333; transform: rotate(45deg); transition: transform 0.3s ease-out; flex-shrink: 0; margin-left: auto; }
 .exhibit-item.is-open .toggle-icon { transform: rotate(-135deg); }
 .details { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, padding 0.5s ease-out; padding: 0 1.2rem; background-color: #fdfdfd; }
-.exhibit-item.is-open .details { max-height: 1000px; padding: 1rem 1.2rem; }
+.exhibit-item.is-open .details { max-height: 1000px; padding: 1rem 1.2rem; } /* 十分な高さを確保 */
 .details p { margin: 0; font-size: 0.9rem; color: #333333; line-height: 1.7; }
 .details p:not(:first-child) { padding-top: 0.8rem; border-top: 1px solid #eee; }
 .exhibit-item .list-image-container { text-align: center; margin-bottom: 1rem; min-height: 100px; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; border-radius: 4px; overflow: hidden; }
 .exhibit-item .list-image { max-width: 100%; max-height: 250px; height: auto; border-radius: 0; object-fit: cover; vertical-align: middle; }
 .exhibit-item .no-image-text { font-size: 0.9rem; color: #6c757d; padding: 2rem 0; }
-.details .map-image-container { margin-top: 1.2rem; text-align: center; }
-.details .map-image { max-width: 100%; height: auto; border-radius: 4px; border: 1px solid #ced4da; }
+.details .map-image-container,
+.details .class-tshirt-image-container { /* ★クラT画像コンテナも共通スタイル */
+    margin-top: 1.2rem;
+    text-align: center;
+}
+.details .map-image,
+.details .class-tshirt-image { /* ★クラT画像も共通スタイル */
+    max-width: 80%; /* 地図やクラTは少し小さめに表示 (任意) */
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    margin-left: auto; /* 中央揃え */
+    margin-right: auto; /* 中央揃え */
+    display: block; /* 中央揃えのため */
+}
 .details .location-text { font-weight: bold; color: #333333; margin-top: 0.8rem; display: block; text-align: center; }
 
-/* === フッターナビゲーションのスタイル === */
-footer {
+/* ★★★ 1・2年生タブ用のスタイル変更 ★★★ */
+.grade-exhibit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    /* 画面幅に応じて列数を調整、写真を大きく見せるため minmax の値を調整 */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 写真を大きくするため最小幅を増やす */
+    gap: 1.5rem; /* アイテム間の隙間を少し広げる */
+}
+.grade-exhibit-item {
     background-color: #ffffff;
-    border-top: 1px solid #e0e0e0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px; /* 角丸を少し大きく */
+    padding: 1rem; /* パディングを増やす */
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1); /* 影を少し濃く */
+}
+.grade-exhibit-item .grade-item-image-container { /* ★新しいクラス名 */
     width: 100%;
-    padding: 0.5rem 0;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.08);
-    z-index: 1000;
-}
-.footer-nav {
+    height: 200px; /* ★画像コンテナの高さを大きく */
     display: flex;
-    justify-content: space-around;
-    align-items: stretch;
-}
-.nav-item {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1;
-    padding: 0.4rem 0.2rem;
-    text-decoration: none;
-    color: #555555;
-    font-size: 0.7rem;
-    line-height: 1.2;
-    transition: color 0.2s ease;
-    position: relative;
+    background-color: #f0f0f0;
+    border-radius: 6px; /* 画像コンテナにも角丸 */
+    margin-bottom: 0.8rem;
+    overflow: hidden;
 }
-.nav-item i {
-    font-size: 1.5rem;
-    margin-bottom: 0.15rem;
-    line-height: 1;
+.grade-exhibit-item .grade-item-image { /* ★新しいクラス名 */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
 }
-.nav-item span {
-    display: block;
-    font-weight: normal;
+.grade-exhibit-item .no-image-placeholder { /* ★クラス名変更 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* ★幅も100%に */
+    height: 200px; /* ★画像の高さと合わせる */
+    background-color: #f0f0f0;
+    color: #888;
+    font-size: 0.9rem; /* ★文字サイズ調整 */
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
 }
+.grade-exhibit-item .class-name {
+    font-weight: bold;
+    font-size: 1rem; /* ★クラス名の文字サイズを少し大きく */
+    color: #333;
+    margin-top: 0.5rem; /* 画像との間に少し余白 */
+}
+
+
+/* === フッターナビゲーションのスタイル (変更なし部分は省略) === */
+footer { background-color: #ffffff; border-top: 1px solid #e0e0e0; position: fixed; bottom: 0; left: 0; width: 100%; padding: 0.5rem 0; box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.08); z-index: 1000; }
+.footer-nav { display: flex; justify-content: space-around; align-items: stretch; }
+.nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 0.4rem 0.2rem; text-decoration: none; color: #555555; font-size: 0.7rem; line-height: 1.2; transition: color 0.2s ease; position: relative; }
+.nav-item i { font-size: 1.5rem; margin-bottom: 0.15rem; line-height: 1; }
+.nav-item span { display: block; font-weight: normal; }
 .nav-item:hover { color: #000000; }
 .nav-item:hover i { color: #000000; }
 .nav-item.active { color: #000000; }
@@ -185,90 +218,15 @@ footer {
 .instagram-link-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
 .instagram-link-button:active { transform: translateY(0); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-/* --- ▼▼▼ 購買ページのスタイルを追加 ▼▼▼ --- */
-.shop-item-list-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* 画面幅に応じて列数を自動調整 */
-    gap: 1rem; /* アイテム間の隙間 */
-    margin-top: 1.5rem;
-}
+/* === 購買ページのスタイル (変更なし部分は省略) === */
+.shop-item-list-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+.shop-item-card { background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.8rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.07); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+.shop-item-card.sold-out { opacity: 0.6; }
+.shop-item-card .item-image-container { width: 100%; height: 130px; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; border-radius: 4px; margin-bottom: 0.75rem; overflow: hidden; }
+.shop-item-card .item-image { max-width: 100%; max-height: 100%; object-fit: cover; }
+.shop-item-card .no-item-image-text { font-size: 0.8rem; color: #888; }
+.shop-item-card .item-name { font-size: 0.9rem; font-weight: bold; color: #333; margin-bottom: 0.4rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; min-height: 2.6em; }
+.shop-item-card .item-price { font-size: 1rem; font-weight: bold; color: #000000; margin-top: auto; margin-bottom: 0; }
+.sold-out-ribbon { position: absolute; top: 10px; right: -30px; background-color: #dc3545; color: white; padding: 5px 30px; font-size: 0.75rem; font-weight: bold; text-align: center; transform: rotate(45deg); box-shadow: 0 2px 3px rgba(0,0,0,0.3); z-index: 10; line-height: 1.2; }
 
-.shop-item-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px; /* 角を少し丸く */
-    padding: 0.8rem;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.07);
-    display: flex;
-    flex-direction: column; /* 中身を縦に並べる */
-    justify-content: space-between; /* 要素間のスペースを均等に */
-    position: relative; /* 売り切れ表示のため */
-    overflow: hidden; /* 売り切れリボンのため */
-}
-
-.shop-item-card.sold-out {
-    opacity: 0.6; /* 売り切れ商品は少し薄く表示 */
-}
-
-.shop-item-card .item-image-container {
-    width: 100%;
-    height: 130px; /* 画像コンテナの高さを固定 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f0f0; /* 画像がない場合の背景 */
-    border-radius: 4px;
-    margin-bottom: 0.75rem;
-    overflow: hidden; /* 画像がはみ出ないように */
-}
-
-.shop-item-card .item-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover; /* アスペクト比を保ちつつコンテナにフィット */
-}
-.shop-item-card .no-item-image-text {
-    font-size: 0.8rem;
-    color: #888;
-}
-
-.shop-item-card .item-name {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.4rem;
-    line-height: 1.3; /* 商品名が複数行になった場合の間隔 */
-    /* 2行までに制限して、はみ出たら ... で表示 (任意) */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 2.6em; /* 2行分の高さを確保 (font-size * line-height * 2) */
-}
-
-.shop-item-card .item-price {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #000000;
-    margin-top: auto; /* 価格を下部に固定 */
-    margin-bottom: 0;
-}
-
-/* 売り切れリボンスタイル */
-.sold-out-ribbon {
-    position: absolute;
-    top: 10px; /* 位置調整 */
-    right: -30px; /* 位置調整 */
-    background-color: #dc3545; /* 赤色 */
-    color: white;
-    padding: 5px 30px; /* パディング調整 */
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-align: center;
-    transform: rotate(45deg); /* 斜めにする */
-    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
-    z-index: 10; /* 画像より手前 */
-    line-height: 1.2;
-}
+/* map.html と shop.html 固有のスタイルはここに追加可能 */
