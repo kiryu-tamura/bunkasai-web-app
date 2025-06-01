@@ -217,7 +217,9 @@
                             const detailsDiv = document.createElement('div');
                             detailsDiv.className = 'details';
                             const detailsP = document.createElement('p');
-                            detailsP.innerHTML = (item.details || '詳細情報はありません。').replace(/\\n/g, '<br>');
+                            const rawDetails = item.details || '詳細情報はありません。';
+                            detailsP.innerHTML = rawDetails.replace(/\\n/g, '<br>');
+
                             const locationSpan = document.createElement('span');
                             locationSpan.className = 'location-text';
                             locationSpan.textContent = item.location_text || '';
@@ -278,6 +280,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchAndDisplayExhibitsHome();
         });
+
+
     </script>
 </body>
 </html>
