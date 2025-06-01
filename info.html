@@ -7,16 +7,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* info.html 固有のスタイルはここに記述可能ですが、
-           ローディング/エラーメッセージは style.css で共通化しました */
-    </style>
 </head>
 <body>
 
@@ -49,27 +44,24 @@
                 <i class="fab fa-instagram"></i>
                 <span>インスタ</span>
             </a>
-            <a href="info.html" class="nav-item active" id="info-nav-item">
+            {/* ↓ id と notification-dot を削除 */}
+            <a href="info.html" class="nav-item active">
                 <i class="fas fa-bullhorn"></i>
                 <span>お知らせ</span>
-                <span class="notification-dot"></span>
             </a>
         </nav>
     </footer>
 
-    <script src="common.js"></script>
+    {/* common.js の読み込みは不要になるので削除 */}
     <script>
-        // info.html 固有のスクリプト
-        const INFO_PAGE_GAS_URL = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec'; // ★ご自身のURL
-        const INFO_PAGE_ANNOUNCEMENTS_API_URL = INFO_PAGE_GAS_URL + '?sheet=Announcements';
-        const infoPageListContainer = document.getElementById('info-list-container');
+        // info.html 固有のスクリプト (通知関連ロジックを削除)
+        const INFO_PAGE_GAS_URL_INFO = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec'; // ★ご自身のURL
+        const INFO_PAGE_ANNOUNCEMENTS_API_URL_INFO = INFO_PAGE_GAS_URL_INFO + '?sheet=Announcements';
+        const infoPageListContainer_info = document.getElementById('info-list-container');
 
-        // localStorage のキー名を common.js と完全に一致させる
-        const INFO_PAGE_LAST_READ_ID_KEY = 'lastReadAnnouncementId_bunkasai_v2';
-
-        async function fetchAndDisplayAnnouncementsOnInfoPage() {
+        async function fetchAndDisplayAnnouncementsOnInfoPage_info() {
             try {
-                const response = await fetch(INFO_PAGE_ANNOUNCEMENTS_API_URL);
+                const response = await fetch(INFO_PAGE_ANNOUNCEMENTS_API_URL_INFO);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -78,25 +70,16 @@
                   throw new Error(rawData.message || 'Failed to load data from Google Sheet.');
                 }
 
-                // お知らせを逆順にする (スプレッドシートの下の行が新しいと仮定)
                 const data = Array.isArray(rawData) ? rawData.slice().reverse() : [];
 
                 if (data.length === 0) {
-                   infoPageListContainer.innerHTML = '<p class="no-announcements-message">表示できるお知らせがありません。</p>';
-                   // 最新のIDがないのでlocalStorageには何もセットしない (またはキー自体を削除)
-                   localStorage.removeItem(INFO_PAGE_LAST_READ_ID_KEY);
-                   return; // この後の既読処理やドット消去は不要
+                   infoPageListContainer_info.innerHTML = '<p class="no-announcements-message">表示できるお知らせがありません。</p>';
+                   return;
                 }
 
-                infoPageListContainer.innerHTML = '';
+                infoPageListContainer_info.innerHTML = '';
                 const infoListDiv = document.createElement('div');
                 infoListDiv.className = 'info-list';
-
-                let newestIdToStoreAsRead = null;
-                if (data.length > 0) {
-                    // 表示順で一番上（元データの最後尾、つまりスプレッドシートで一番下に追加されたもの）のIDを「既読」として保存するIDとする
-                    newestIdToStoreAsRead = data[0].id;
-                }
 
                 data.forEach(item => {
                     const infoItemDiv = document.createElement('div');
@@ -114,29 +97,16 @@
                     infoItemDiv.appendChild(contentP);
                     infoListDiv.appendChild(infoItemDiv);
                 });
-                infoPageListContainer.appendChild(infoListDiv);
-
-                // お知らせ画面を開き、内容を表示したら、表示されている一番上のお知らせのIDを「既読」として記録
-                if (newestIdToStoreAsRead) {
-                    localStorage.setItem(INFO_PAGE_LAST_READ_ID_KEY, newestIdToStoreAsRead);
-                } else {
-                    // 表示するお知らせがない場合は、既読IDをクリアする
-                    localStorage.removeItem(INFO_PAGE_LAST_READ_ID_KEY);
-                }
+                infoPageListContainer_info.appendChild(infoListDiv);
 
             } catch (error) {
                 console.error('Error fetching or displaying announcements on info.html:', error);
-                infoPageListContainer.innerHTML = `<div class="error-message">お知らせの読み込みに失敗しました。<br>(${error.message})</div>`;
+                infoPageListContainer_info.innerHTML = `<div class="error-message">お知らせの読み込みに失敗しました。<br>(${error.message})</div>`;
             }
         }
         
         document.addEventListener('DOMContentLoaded', () => {
-            // ★★★ お知らせページを開いたら、まず通知ドットを消す ★★★
-            if (typeof updateGlobalNotificationDot === 'function') {
-                updateGlobalNotificationDot(false);
-            }
-            // その後、お知らせ内容を表示し、最新の既読IDを保存する
-            fetchAndDisplayAnnouncementsOnInfoPage();
+            fetchAndDisplayAnnouncementsOnInfoPage_info();
         });
     </script>
 </body>

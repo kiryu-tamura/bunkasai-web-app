@@ -353,8 +353,6 @@ footer {
 .nav-item.active { color: #000000; }
 .nav-item.active i { color: #000000; }
 .nav-item.active span { font-weight: bold; }
-.notification-dot { position: absolute; top: 2px; right: calc(50% - 18px); width: 8px; height: 8px; background-color: red; border-radius: 50%; border: 1px solid white; display: none; }
-.nav-item.has-notification .notification-dot { display: block; }
 
 /* === ゲーム画面のスタイル === */
 .game-item { background-color: #ffffff; padding: 1.2rem 1.5rem; margin-bottom: 1.2rem; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; align-items: center; text-align: center; }
