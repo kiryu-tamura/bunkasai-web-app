@@ -22,11 +22,11 @@
     <main class="shop-page-container">
         <h2>購買・キッチンカー</h2>
         <p style="text-align:center; padding: 0 0 1rem; color: #555;">
-            第一物理室で飲食物を販売しています！<br>
+            美味しいものや記念グッズをゲットしよう！<br>
             <span style="font-size:0.8em;">(売り切れ情報は随時更新されます)</span>
         </p>
 
-        <div class="tab-container"> 
+        <div class="tab-container">
             <div class="shop-tab-buttons">
                 <button class="shop-tab-button active" data-tab-target="#kobaibai-content">購買</button>
                 <button class="shop-tab-button" data-tab-target="#kitchen-car-content">キッチンカー</button>
@@ -75,8 +75,7 @@
 
     <script src="common.js"></script>
     <script>
-       // Google Apps Script の Web アプリ URL を設定
-        const SHOP_PAGE_GAS_URL = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec'; // ★必ずご自身のGAS URLに置き換えてください
+        const SHOP_PAGE_GAS_URL = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec'; // ★ご自身のGAS URL
         const SHOP_ITEMS_API_URL = SHOP_PAGE_GAS_URL + '?sheet=ShopItems';
         const KITCHEN_CARS_API_URL = SHOP_PAGE_GAS_URL + '?sheet=KitchenCars';
         const KITCHEN_CAR_ITEMS_API_URL = SHOP_PAGE_GAS_URL + '?sheet=KitchenCarItems';
@@ -87,15 +86,12 @@
         const shopTabButtons = document.querySelectorAll('.shop-tab-button');
         const shopTabContents = document.querySelectorAll('.shop-tab-content');
 
-        // 購買ページのタブ切り替え機能
         shopTabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const targetId = button.dataset.tabTarget;
                 const targetContent = document.querySelector(targetId);
-
                 shopTabButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-
                 shopTabContents.forEach(content => content.classList.remove('active'));
                 if (targetContent) {
                     targetContent.classList.add('active');
@@ -103,27 +99,24 @@
             });
         });
 
-        // 購買商品を表示する関数
         async function fetchAndDisplayShopItems() {
             const container = shopItemListContainer;
             if (!container) return;
             container.innerHTML = '<p class="loading-message">購買の商品情報を読み込み中...</p>';
-
             try {
                 const response = await fetch(SHOP_ITEMS_API_URL);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
                 if (data.error) throw new Error(data.message || 'Failed to load shop items.');
-
                 if (!Array.isArray(data) || data.length === 0) {
                     container.innerHTML = '<p class="no-shop-items-message">現在販売中の商品はありません。</p>';
                     return;
                 }
                 container.innerHTML = '';
-
                 data.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'shop-item-card';
+                    // ▼▼▼ スプレッドシートの列名が "sold_out" (アンダースコア) の場合 ▼▼▼
                     if (item.sold_out === true || String(item.sold_out).toUpperCase() === 'TRUE') {
                         card.classList.add('sold-out');
                     }
@@ -141,6 +134,7 @@
                     priceP.className = 'item-price';
                     priceP.textContent = typeof item.price === 'number' ? `¥${item.price}` : (item.price || '価格未定');
                     let soldOutRibbonHtml = '';
+                    // ▼▼▼ スプレッドシートの列名が "sold_out" (アンダースコア) の場合 ▼▼▼
                     if (item.sold_out === true || String(item.sold_out).toUpperCase() === 'TRUE') {
                         soldOutRibbonHtml = '<div class="sold-out-ribbon">SOLD OUT</div>';
                     }
@@ -153,25 +147,20 @@
             }
         }
 
-        // キッチンカーとその商品を表示する関数 (★こちらが修正されたバージョンです★)
         async function fetchAndDisplayKitchenCars() {
             const container = kitchenCarListContainer;
             if (!container) return;
             container.innerHTML = '<p class="loading-message">キッチンカー情報を読み込み中...</p>';
-            console.log('Fetching kitchen car data...'); // ★追加
-
             try {
                 const carsResponse = await fetch(KITCHEN_CARS_API_URL);
                 if (!carsResponse.ok) throw new Error(`HTTP error! KitchenCars status: ${carsResponse.status}`);
                 const kitchenCars = await carsResponse.json();
                 if (kitchenCars.error) throw new Error(kitchenCars.message || 'Failed to load kitchen cars.');
-                console.log('KitchenCars data:', kitchenCars); // ★追加
 
                 const itemsResponse = await fetch(KITCHEN_CAR_ITEMS_API_URL);
                 if (!itemsResponse.ok) throw new Error(`HTTP error! KitchenCarItems status: ${itemsResponse.status}`);
                 const allKitchenCarItems = await itemsResponse.json();
                 if (allKitchenCarItems.error) throw new Error(allKitchenCarItems.message || 'Failed to load kitchen car items.');
-                console.log('AllKitchenCarItems data:', allKitchenCarItems); // ★追加
 
                 if (!Array.isArray(kitchenCars) || kitchenCars.length === 0) {
                     container.innerHTML = '<p class="no-exhibits-message">現在出店中のキッチンカーはありません。</p>';
@@ -180,10 +169,8 @@
                 container.innerHTML = '';
 
                 kitchenCars.forEach(car => {
-                    console.log('Processing Kitchen Car:', car.name, car.id); // ★追加
                     const carLi = document.createElement('li');
                     carLi.className = 'kitchen-car-item js-kc-item';
-                    
                     const summaryDiv = document.createElement('div');
                     summaryDiv.className = 'kitchen-car-summary';
                     const listImageContainer = document.createElement('div');
@@ -218,20 +205,21 @@
                     const kcItemListDiv = document.createElement('div');
                     kcItemListDiv.className = 'kc-item-list';
 
-                    const itemsForThisCar = Array.isArray(allKitchenCarItems) ? allKitchenCarItems.filter(item => {
-                        // console.log(`Filtering: item.kitchen_car_id (${typeof item.kitchen_car_id} "${item.kitchen_car_id}") === car.id (${typeof car.id} "${car.id}")`);
-                        return String(item.kitchen_car_id).trim() === String(car.id).trim() && (item.item_active === true || String(item.item_active).toUpperCase() === 'TRUE');
-                    }) : [];
-                    console.log('Items for this car (' + car.name + '):', itemsForThisCar); // ★追加
+                    const itemsForThisCar = Array.isArray(allKitchenCarItems) ? allKitchenCarItems.filter(item => 
+                        String(item.kitchen_car_id).trim() === String(car.id).trim() && 
+                        (item.active === true || String(item.active).toUpperCase() === 'TRUE')
+                    ) : [];
 
                     if (itemsForThisCar.length > 0) {
                         itemsForThisCar.forEach(menuItem => {
                             const itemCard = document.createElement('div');
                             itemCard.className = 'kc-item-card';
+                            // ▼▼▼ スプレッドシートの列名が "item_sold_out" (アンダースコア) の場合 ▼▼▼
                             if (menuItem.item_sold_out === true || String(menuItem.item_sold_out).toUpperCase() === 'TRUE') {
                                 itemCard.classList.add('sold-out');
                             }
                             let itemImageHtml = '<div class="no-kc-item-image-text">[商品画像なし]</div>';
+                            // ▼▼▼ スプレッドシートの列名が "item_image" (アンダースコア) の場合 ▼▼▼
                             if (menuItem.item_image) {
                                 itemImageHtml = `<img src="images/${menuItem.item_image}" alt="${menuItem.item_name || '商品画像'}" class="kc-item-image" onerror="this.style.display='none'; this.parentElement.innerHTML = '<div class=\\'no-kc-item-image-text\\'>[画像準備中]</div>';">`;
                             }
@@ -243,11 +231,16 @@
                             itemNameH5.textContent = menuItem.item_name || '商品名なし';
                             const itemPriceP = document.createElement('p');
                             itemPriceP.className = 'kc-item-price';
+                            // ▼▼▼ スプレッドシートの列名が "item_price" (アンダースコア) の場合 ▼▼▼
                             itemPriceP.textContent = typeof menuItem.item_price === 'number' ? `¥${menuItem.item_price}` : (menuItem.item_price || '');
+                            
                             const itemDescriptionP = document.createElement('p');
                             itemDescriptionP.className = 'kc-item-description';
+                             // ▼▼▼ スプレッドシートの列名が "item_description" (アンダースコア) の場合 ▼▼▼
                             itemDescriptionP.textContent = menuItem.item_description || '';
+
                             let kcSoldOutRibbonHtml = '';
+                             // ▼▼▼ スプレッドシートの列名が "item_sold_out" (アンダースコア) の場合 ▼▼▼
                             if (menuItem.item_sold_out === true || String(menuItem.item_sold_out).toUpperCase() === 'TRUE') {
                                 kcSoldOutRibbonHtml = '<div class="kc-sold-out-ribbon">SOLD OUT</div>';
                             }
@@ -258,13 +251,11 @@
                         kcItemListDiv.innerHTML = '<p style="font-size:0.9em; color:#777; text-align:center;">現在販売中の商品はありません。</p>';
                     }
                     detailsDiv.appendChild(kcItemListDiv);
-
                     carLi.appendChild(summaryDiv);
                     carLi.appendChild(detailsDiv);
                     container.appendChild(carLi);
                 });
                 setupKitchenCarAccordionListeners(container);
-
             } catch (error) {
                 console.error('Error fetching kitchen car data:', error);
                 container.innerHTML = `<div class="error-message">キッチンカー情報の読み込みに失敗しました。<br>(${error.message})</div>`;
