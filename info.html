@@ -52,10 +52,30 @@
     </footer>
 
     <script>
-        // info.html 固有のスクリプト (通知関連ロジックを削除)
+        // info.html 固有のスクリプト
         const INFO_PAGE_GAS_URL_INFO = 'https://script.google.com/macros/s/AKfycbwv5vYFdFtMztnNjfvxUpvjclMaZ1j_c2NUd_WzKunBQIXfd5dywbrFc2kgQEmd0BeLHw/exec'; // ★ご自身のURL
         const INFO_PAGE_ANNOUNCEMENTS_API_URL_INFO = INFO_PAGE_GAS_URL_INFO + '?sheet=Announcements';
         const infoPageListContainer_info = document.getElementById('info-list-container');
+
+        /**
+         * 文字列内のURLを検出し、<a>タグに変換する関数
+         * @param {string} text - 変換対象のテキスト
+         * @returns {string} - URLがリンク化されたHTML文字列
+         */
+        function linkify(text) {
+            if (!text) return '';
+            // URLを検出する正規表現 (http, https, ftp, wwwから始まるもの)
+            // www.example.com のような形式も http:// を補完してリンク化
+            const urlRegex = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlRegex, function(url) {
+                let fullUrl = url;
+                if (url.toLowerCase().startsWith('www.')) {
+                    fullUrl = 'http://' + url;
+                }
+                // リンクを新しいタブで開くように target="_blank" を追加
+                return `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+            });
+        }
 
         async function fetchAndDisplayAnnouncementsOnInfoPage_info() {
             try {
@@ -87,9 +107,15 @@
                     const dateP = document.createElement('p');
                     dateP.className = 'date';
                     dateP.textContent = item.date || '';
+                    
                     const contentP = document.createElement('p');
                     contentP.className = 'description';
-                    contentP.innerHTML = (item.content || '本文はありません。').replace(/\\n/g, '<br>');
+                    // ▼▼▼ お知らせ本文をlinkify関数で処理してから表示 ▼▼▼
+                    const rawContent = item.content || '本文はありません。';
+                    const linkedContent = linkify(rawContent.replace(/\\n/g, '<br>')); // まず改行を<br>に変換し、その後URLをリンク化
+                    contentP.innerHTML = linkedContent;
+                    // ▲▲▲ ここまで変更 ▲▲▲
+                    
                     infoItemDiv.appendChild(titleH3);
                     if(item.date) infoItemDiv.appendChild(dateP);
                     infoItemDiv.appendChild(contentP);
