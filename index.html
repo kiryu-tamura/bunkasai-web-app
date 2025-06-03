@@ -217,9 +217,7 @@
                             const detailsDiv = document.createElement('div');
                             detailsDiv.className = 'details';
                             const detailsP = document.createElement('p');
-                            const rawDetails = item.details || '詳細情報はありません。';
-                            detailsP.innerHTML = rawDetails.replace(/\\n/g, '<br>');
-
+                            detailsP.innerHTML = (item.details || '詳細情報はありません。').replace(/\\n/g, '<br>');
                             const locationSpan = document.createElement('span');
                             locationSpan.className = 'location-text';
                             locationSpan.textContent = item.location_text || '';
